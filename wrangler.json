@@ -8,5 +8,11 @@
   },
   "observability": {
     "enabled": true
-  }
+  },
+  "routes": [
+    {
+      "pattern": "img.veaix.com",
+      "custom_domain": true
+    }
+  ]
 }
