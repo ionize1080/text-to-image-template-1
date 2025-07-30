@@ -54,9 +54,35 @@ export default {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background 0.3s ease;
   }
   button:hover {
     background: #0059c1;
+  }
+  button[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .status {
+    display: none;
+    margin-top: 1rem;
+    color: #555;
+    font-size: 0.9rem;
+    font-style: italic;
+    align-items: center;
+    justify-content: center;
+  }
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid #eee;
+    border-top: 2px solid #0070f3;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
   img {
     margin-top: 1rem;
@@ -71,6 +97,7 @@ export default {
   <form id="prompt-form">
     <input id="prompt-input" type="text" placeholder="Describe the image" required />
     <button type="submit">Generate</button>
+    <p id="status" class="status"><span class="spinner"></span>Generating image...</p>
   </form>
   <img id="result" alt="Your generated image will appear here" />
 </div>
@@ -78,9 +105,24 @@ export default {
   const form = document.getElementById('prompt-form');
   const input = document.getElementById('prompt-input');
   const img = document.getElementById('result');
+  const button = form.querySelector('button');
+  const status = document.getElementById('status');
+  const defaultStatus = status.innerHTML;
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    button.disabled = true;
+    status.innerHTML = defaultStatus;
+    status.style.display = 'flex';
     img.src = '/image?prompt=' + encodeURIComponent(input.value);
+  });
+  img.addEventListener('load', () => {
+    button.disabled = false;
+    status.style.display = 'none';
+  });
+  img.addEventListener('error', () => {
+    button.disabled = false;
+    status.style.display = 'block';
+    status.innerHTML = 'Failed to generate image';
   });
 </script>
 </body>
